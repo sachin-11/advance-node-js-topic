@@ -1,0 +1,8 @@
+node_modules/
+*.log
+*.txt
+*.csv
+*.json
+.DS_Store
+chunk-*.txt
+

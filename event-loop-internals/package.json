@@ -1,0 +1,24 @@
+{
+  "name": "event-loop-internals",
+  "version": "1.0.0",
+  "description": "Deep dive into Node.js Event Loop Internals",
+  "main": "01-basic-flow.js",
+  "scripts": {
+    "basic": "node 01-basic-flow.js",
+    "phases": "node 02-event-loop-phases.js",
+    "nexttick": "node 03-nexttick-vs-promise.js",
+    "microtask": "node 04-microtask-queue.js",
+    "timers": "node 05-timers.js",
+    "io": "node 06-io-operations.js",
+    "immediate": "node 07-setimmediate-vs-settimeout.js",
+    "advanced": "node 08-advanced-scenarios.js",
+    "microtask-vs-macrotask": "node 09-microtask-vs-macrotask.js",
+    "non-blocking": "node 10-non-blocking-architecture.js",
+    "all": "node run-all.js"
+  },
+  "keywords": ["event-loop", "nodejs", "async"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
+
