@@ -1,0 +1,23 @@
+{
+  "name": "worker-threads-demo",
+  "version": "1.0.0",
+  "description": "Node.js Worker Threads - Image Compression Example",
+  "main": "01-basic-worker.js",
+  "type": "module",
+  "scripts": {
+    "basic": "node 01-basic-worker.js",
+    "image-blocking": "node 02-image-compression-blocking.js",
+    "image-worker": "node 03-image-compression-worker.js",
+    "multiple": "node 04-multiple-workers.js",
+    "pool": "node 05-worker-pool.js",
+    "compare": "node 06-performance-comparison.js",
+    "all": "node run-all.js"
+  },
+  "keywords": ["worker-threads", "nodejs", "image-compression", "parallelism"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sharp": "^0.33.0"
+  }
+}
+
