@@ -1,0 +1,19 @@
+{
+  "name": "event-loop-performance-demo",
+  "version": "1.0.0",
+  "description": "Event Loop Performance - Blocking vs Non-Blocking, Microtasks vs Macrotasks",
+  "main": "01-blocking-vs-nonblocking.js",
+  "type": "module",
+  "scripts": {
+    "blocking": "node 01-blocking-vs-nonblocking.js",
+    "concurrent": "node 02-1000-concurrent-requests.js",
+    "event-loop": "node 03-event-loop-phases.js",
+    "microtask": "node 04-microtask-vs-macrotask.js",
+    "throughput": "node 05-throughput-comparison.js",
+    "all": "node run-all.js"
+  },
+  "keywords": ["event-loop", "nodejs", "blocking", "non-blocking", "performance", "microtask", "macrotask"],
+  "author": "",
+  "license": "ISC"
+}
+
