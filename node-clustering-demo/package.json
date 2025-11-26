@@ -1,0 +1,26 @@
+{
+  "name": "node-clustering-demo",
+  "version": "1.0.0",
+  "description": "Node.js Clustering - Real World Examples",
+  "main": "01-basic-clustering.js",
+  "type": "module",
+  "scripts": {
+    "basic": "node 01-basic-clustering.js",
+    "http": "node 02-http-server-cluster.js",
+    "load-balance": "node 03-load-balancing-demo.js",
+    "zero-downtime": "node 04-zero-downtime-restart.js",
+    "cpu-intensive": "node 05-cpu-intensive-tasks.js",
+    "shared-state": "node 06-shared-state-management.js",
+    "performance": "node 07-performance-comparison.js",
+    "api-server": "node 08-real-world-api-server.js",
+    "graceful": "node 09-graceful-shutdown.js",
+    "all": "node run-all.js"
+  },
+  "keywords": ["clustering", "nodejs", "load-balancing", "scalability", "performance"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+
