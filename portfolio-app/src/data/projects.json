@@ -1,0 +1,63 @@
+[
+  {
+    "name": "Seekrz",
+    "description": "A live mobile application available on both App Store and Play Store, designed for users and store owners across multiple locations. Features trade offers between stores, automated trade handling, and comprehensive payment integrations.",
+    "technologies": ["Node.js", "Stripe", "ACH", "Apple Pay", "Cron Jobs", "Real-time APIs"],
+    "features": [
+      "Trade offer system between stores with auto-cancel after 48 hours",
+      "Multiple payment gateway integrations (Stripe, ACH, Apple Pay, Cash Pay)",
+      "Bulk order functionality",
+      "High-performance APIs under heavy loads",
+      "Notification systems and authentication"
+    ]
+  },
+  {
+    "name": "Cellcast",
+    "description": "Australia-based project focused on bulk SMS communication and client engagement solutions. Enables businesses to send and manage bulk SMS campaigns with credit management and transactional transparency.",
+    "technologies": ["Node.js", "Stripe", "SMS Gateway", "Payment Integration", "Credit Management"],
+    "features": [
+      "Bulk SMS campaign management",
+      "Stripe payment gateway for top-ups and subscriptions",
+      "SMS credit and user balance management",
+      "Transactional logging for full transparency",
+      "High reliability and delivery speed"
+    ]
+  },
+  {
+    "name": "Pondir",
+    "description": "Platform built from scratch using Node.js for online course management, similar to Udemy model. Features comprehensive agency module, mastermind modules, and Facebook integration for revenue generation.",
+    "technologies": ["Node.js", "JWT", "MongoDB", "Twilio", "Node-Cron", "MongoDB Aggregation"],
+    "features": [
+      "Course management and mastermind modules",
+      "Comprehensive agency module",
+      "Secure JWT authentication and authorization",
+      "Twilio SMS integration",
+      "Automated membership activation/deactivation",
+      "Complex API responses using MongoDB Aggregation Pipelines"
+    ]
+  },
+  {
+    "name": "Speech Therapy Medical Application",
+    "description": "Medical application developed using NestJS focusing on secure patient data handling, appointment scheduling, and session management for speech therapy services.",
+    "technologies": ["NestJS", "Node.js", "Secure Data Handling", "Appointment Scheduling"],
+    "features": [
+      "Secure patient data handling",
+      "Appointment scheduling system",
+      "Session management",
+      "HIPAA-compliant architecture",
+      "Real-time communication features"
+    ]
+  },
+  {
+    "name": "Austin Indian",
+    "description": "Community platform to help Indians in Austin, Texas find local Indian restaurants easily. Features comprehensive search and filtering capabilities to connect the Indian community with local businesses.",
+    "technologies": ["Node.js", "REST APIs", "Search & Filter", "Location-based Services"],
+    "features": [
+      "Complete backend APIs for search and filtering",
+      "Location-based restaurant discovery",
+      "Community-focused platform",
+      "Easy navigation for Indian community in Austin"
+    ]
+  }
+]
+
