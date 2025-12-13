@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastebin Clone</title>
+    <style>
+        body { font-family: monospace; max-width: 800px; margin: 0 auto; padding: 20px; background: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 300px; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; font-family: monospace; }
+        input, select, button { padding: 10px; margin-right: 10px; margin-bottom: 10px; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 10px; background: #e9ecef; border-left: 5px solid #007bff; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>New Paste</h1>
+        <textarea id="content" placeholder="Paste your code here..."></textarea>
+        <div>
+            <input type="text" id="title" placeholder="Paste Name / Title">
+            <select id="language">
+                <option value="text">Plain Text</option>
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+            </select>
+            <button onclick="createPaste()">Create New Paste</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <div class="container" style="margin-top: 20px;">
+        <h2>Retrieve Paste</h2>
+        <input type="text" id="pasteId" placeholder="Paste ID">
+        <button onclick="getPaste()">Get Paste</button>
+        <pre id="viewContent" style="background: #272822; color: #f8f8f2; padding: 15px; border-radius: 5px; overflow-x: auto; display: none;"></pre>
+    </div>
+
+    <script>
+        async function createPaste() {
+            const content = document.getElementById('content').value;
+            const title = document.getElementById('title').value;
+            const language = document.getElementById('language').value;
+
+            if (!content) return alert('Please enter some content');
+
+            const res = await fetch('/api/paste', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, title, language })
+            });
+
+            const data = await res.json();
+            const resultDiv = document.getElementById('result');
+            if (data.url) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `Paste Created! <br> ID: <strong>${data.paste_id}</strong> <br> Link: <a href="${data.url}" target="_blank">${data.url}</a>`;
+            } else {
+                alert('Error creating paste');
+            }
+        }
+
+        async function getPaste() {
+            const id = document.getElementById('pasteId').value;
+            if (!id) return alert('Enter Paste ID');
+
+            const res = await fetch(`/api/paste/${id}`);
+            if (!res.ok) return alert('Paste not found');
+
+            const data = await res.json();
+            const viewDiv = document.getElementById('viewContent');
+            viewDiv.style.display = 'block';
+            viewDiv.textContent = data.content;
+        }
+    </script>
+</body>
+</html>
