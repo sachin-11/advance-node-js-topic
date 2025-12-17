@@ -8,13 +8,13 @@ require('dotenv').config();
  * Run with: node scripts/setup-db.js
  */
 
-const DB_NAME = process.env.DB_NAME || 'instagram_db';
+const DB_NAME = process.env.DB_NAME || 'whatsapp_db';
 const DB_USER = process.env.DB_USER || 'postgres';
 const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = parseInt(process.env.DB_PORT || '5432');
 const DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
 
-console.log('🚀 Setting up Instagram database...\n');
+console.log('🚀 Setting up WhatsApp database...\n');
 
 // Connect to PostgreSQL server (using default 'postgres' database)
 const adminPool = new Pool({
@@ -102,4 +102,3 @@ async function setupDatabase() {
 }
 
 setupDatabase();
-

@@ -7,7 +7,7 @@ dotenv.config();
 const pool = new Pool({
     user: process.env.DB_USER || 'postgres',
     host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME || 'instagram_db',
+    database: process.env.DB_NAME || 'whatsapp_db',
     password: process.env.DB_PASSWORD || 'postgres',
     port: parseInt(process.env.DB_PORT || '5432'),
     connectionTimeoutMillis: 5000,
@@ -67,19 +67,19 @@ const testConnection = async () => {
             console.error('      net start postgresql-x64-15  (or your PostgreSQL service name)');
             console.error('      Or use Services app: services.msc');
             console.error('   2. Create database:');
-            console.error('      psql -U postgres -c "CREATE DATABASE instagram_db;"');
+            console.error('      psql -U postgres -c "CREATE DATABASE whatsapp_db;"');
             console.error('   3. Or run setup script:');
             console.error('      npm run setup-db');
         } else {
             console.error('   macOS/Linux:');
             console.error('   brew services start postgresql@15');
-            console.error('   createdb -U postgres instagram_db');
+            console.error('   createdb -U postgres whatsapp_db');
             console.error('   npm run setup-db');
         }
         console.error('\n📝 Check your .env file for correct database credentials:\n');
         console.error(`   DB_HOST=${process.env.DB_HOST || 'localhost'}`);
         console.error(`   DB_PORT=${process.env.DB_PORT || '5432'}`);
-        console.error(`   DB_NAME=${process.env.DB_NAME || 'instagram_db'}`);
+        console.error(`   DB_NAME=${process.env.DB_NAME || 'whatsapp_db'}`);
         console.error(`   DB_USER=${process.env.DB_USER || 'postgres'}`);
         console.error(`   DB_PASSWORD=${process.env.DB_PASSWORD ? '***' : 'postgres (default)'}\n`);
         
@@ -94,4 +94,3 @@ testConnection();
 export const getDbStatus = () => isConnected;
 
 export default pool;
-
