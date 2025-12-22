@@ -1,0 +1,766 @@
+openapi: 3.0.3
+info:
+  title: Uber Clone Backend API
+  description: |
+    Production-Grade Uber Clone Backend API with real-time WebSocket support.
+    
+    ## Features
+    - Real-time driver matching
+    - Live location tracking
+    - Dynamic surge pricing
+    - Complete ride lifecycle management
+    
+    ## WebSocket Events
+    See README.md for complete WebSocket event documentation.
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: ISC
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.example.com/api
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check and system status
+  - name: Stats
+    description: System statistics
+  - name: Rides
+    description: Ride management endpoints
+  - name: Drivers
+    description: Driver management endpoints
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check if the API is running
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                success: true
+                status: ok
+                service: uber-clone-backend
+                timestamp: "2024-12-21T14:30:00.000Z"
+
+  /stats:
+    get:
+      tags:
+        - Stats
+      summary: Get system statistics
+      description: Get real-time statistics about drivers, rides, and surge pricing
+      operationId: getStats
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+
+  /rides:
+    get:
+      tags:
+        - Rides
+      summary: Get all rides
+      description: Retrieve all rides in the system
+      operationId: getAllRides
+      responses:
+        '200':
+          description: List of rides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RidesListResponse'
+
+    post:
+      tags:
+        - Rides
+      summary: Request a new ride
+      description: Create a new ride request and match with nearest driver
+      operationId: requestRide
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RideRequest'
+            example:
+              riderId: rider_1
+              riderName: Alice Smith
+              pickup:
+                lat: 28.7041
+                lng: 77.1025
+              dropoff:
+                lat: 28.6139
+                lng: 77.2090
+              rideType: uberx
+              zone: downtown
+              paymentMethod: card
+      responses:
+        '201':
+          description: Ride requested successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RideResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '503':
+          description: No drivers available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /rides/active:
+    get:
+      tags:
+        - Rides
+      summary: Get active rides
+      description: Get all rides that are currently active (not completed or cancelled)
+      operationId: getActiveRides
+      responses:
+        '200':
+          description: List of active rides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RidesListResponse'
+
+  /rides/estimate-fare:
+    post:
+      tags:
+        - Rides
+      summary: Estimate fare
+      description: Calculate estimated fare for a ride without creating it
+      operationId: estimateFare
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FareEstimateRequest'
+            example:
+              pickup:
+                lat: 28.7041
+                lng: 77.1025
+              dropoff:
+                lat: 28.6139
+                lng: 77.2090
+              zone: downtown
+      responses:
+        '200':
+          description: Fare estimate calculated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FareEstimateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /rides/{id}:
+    get:
+      tags:
+        - Rides
+      summary: Get ride by ID
+      description: Retrieve a specific ride by its ID
+      operationId: getRideById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ride ID
+      responses:
+        '200':
+          description: Ride details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRideResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Rides
+      summary: Accept ride
+      description: Driver accepts a ride request
+      operationId: acceptRide
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Ride ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                driverId:
+                  type: string
+                  description: Driver ID (optional, for verification)
+      responses:
+        '200':
+          description: Ride accepted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRideResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rides/{id}/start:
+    post:
+      tags:
+        - Rides
+      summary: Start ride
+      description: Mark ride as started (after driver arrives)
+      operationId: startRide
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ride started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRideResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rides/{id}/complete:
+    post:
+      tags:
+        - Rides
+      summary: Complete ride
+      description: Complete the ride and generate receipt
+      operationId: completeRide
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ride completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RideCompleteResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rides/{id}/cancel:
+    post:
+      tags:
+        - Rides
+      summary: Cancel ride
+      description: Cancel an active ride
+      operationId: cancelRide
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Cancellation reason
+      responses:
+        '200':
+          description: Ride cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleRideResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /drivers:
+    get:
+      tags:
+        - Drivers
+      summary: Get all drivers
+      description: Retrieve all drivers in the system
+      operationId: getAllDrivers
+      responses:
+        '200':
+          description: List of drivers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriversListResponse'
+
+  /drivers/available:
+    get:
+      tags:
+        - Drivers
+      summary: Get available drivers
+      description: Get all drivers who are currently available
+      operationId: getAvailableDrivers
+      responses:
+        '200':
+          description: List of available drivers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriversListResponse'
+
+  /drivers/{id}:
+    get:
+      tags:
+        - Drivers
+      summary: Get driver by ID
+      description: Retrieve a specific driver by ID
+      operationId: getDriverById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Driver details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleDriverResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /drivers/{id}/history:
+    get:
+      tags:
+        - Drivers
+      summary: Get driver location history
+      description: Get location history for a driver
+      operationId: getDriverHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Driver location history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverHistoryResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /drivers/{driverId}/location:
+    put:
+      tags:
+        - Drivers
+      summary: Update driver location
+      description: Update a driver's current location
+      operationId: updateDriverLocation
+      parameters:
+        - name: driverId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - location
+              properties:
+                location:
+                  $ref: '#/components/schemas/Location'
+            example:
+              location:
+                lat: 28.7041
+                lng: 77.1025
+      responses:
+        '200':
+          description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleDriverResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    Location:
+      type: object
+      required:
+        - lat
+        - lng
+      properties:
+        lat:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 28.7041
+        lng:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 77.1025
+
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        status:
+          type: string
+        service:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    StatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        drivers:
+          type: object
+          properties:
+            total:
+              type: integer
+            available:
+              type: integer
+            busy:
+              type: integer
+        rides:
+          type: object
+          properties:
+            total:
+              type: integer
+            active:
+              type: integer
+            pending:
+              type: integer
+            completed:
+              type: integer
+            cancelled:
+              type: integer
+        surge:
+          type: array
+          items:
+            type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    RideRequest:
+      type: object
+      required:
+        - riderId
+        - pickup
+        - dropoff
+      properties:
+        riderId:
+          type: string
+        riderName:
+          type: string
+        pickup:
+          $ref: '#/components/schemas/Location'
+        dropoff:
+          $ref: '#/components/schemas/Location'
+        rideType:
+          type: string
+          enum: [uberx, uberxl, uberblack, uberpool]
+          default: uberx
+        zone:
+          type: string
+          default: downtown
+        paymentMethod:
+          type: string
+          enum: [cash, card, upi]
+          default: cash
+
+    FareEstimateRequest:
+      type: object
+      required:
+        - pickup
+        - dropoff
+      properties:
+        pickup:
+          $ref: '#/components/schemas/Location'
+        dropoff:
+          $ref: '#/components/schemas/Location'
+        surgeMultiplier:
+          type: number
+          minimum: 1.0
+        zone:
+          type: string
+
+    FareEstimateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        estimate:
+          type: object
+          properties:
+            distance:
+              type: number
+            estimatedDuration:
+              type: integer
+            baseFare:
+              type: number
+            distanceFare:
+              type: number
+            timeFare:
+              type: number
+            subtotal:
+              type: number
+            surgeMultiplier:
+              type: number
+            serviceFee:
+              type: number
+            gst:
+              type: number
+            total:
+              type: number
+
+    Ride:
+      type: object
+      properties:
+        id:
+          type: string
+        riderId:
+          type: string
+        riderName:
+          type: string
+        driverId:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, MATCHED, ACCEPTED, ARRIVED, IN_PROGRESS, COMPLETED, CANCELLED]
+        pickup:
+          $ref: '#/components/schemas/Location'
+        dropoff:
+          $ref: '#/components/schemas/Location'
+        rideType:
+          type: string
+        zone:
+          type: string
+        distance:
+          type: number
+        estimatedDuration:
+          type: integer
+        estimatedFare:
+          type: number
+        surgeMultiplier:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        statusHistory:
+          type: array
+          items:
+            type: object
+
+    Driver:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        vehicleType:
+          type: string
+        zone:
+          type: string
+        isAvailable:
+          type: boolean
+        rating:
+          type: number
+        joinedAt:
+          type: string
+          format: date-time
+
+    RidesListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        rides:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ride'
+
+    SingleRideResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        ride:
+          $ref: '#/components/schemas/Ride'
+        message:
+          type: string
+
+    RideResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ride:
+          $ref: '#/components/schemas/Ride'
+        driver:
+          $ref: '#/components/schemas/Driver'
+        fare:
+          $ref: '#/components/schemas/FareEstimateResponse'
+
+    RideCompleteResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        ride:
+          $ref: '#/components/schemas/Ride'
+        receipt:
+          type: object
+          properties:
+            rideId:
+              type: string
+            date:
+              type: string
+              format: date-time
+            fareBreakdown:
+              type: object
+            total:
+              type: number
+
+    DriversListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        available:
+          type: integer
+        busy:
+          type: integer
+        drivers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Driver'
+
+    SingleDriverResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        driver:
+          $ref: '#/components/schemas/Driver'
+
+    DriverHistoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        driverId:
+          type: string
+        totalPoints:
+          type: integer
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              location:
+                $ref: '#/components/schemas/Location'
+              timestamp:
+                type: string
+                format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        error:
+          type: string
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad request - validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error: Validation error
+            message: Pickup and dropoff locations required
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error: Not found
+            message: Ride not found

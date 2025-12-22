@@ -1,0 +1,444 @@
+{
+	"info": {
+		"_postman_id": "uber-clone-backend-api",
+		"name": "Uber Clone Backend API",
+		"description": "Complete API collection for Uber Clone Backend - Production-Grade Ride-Sharing System\n\n## Features\n- Real-time driver matching\n- Live location tracking\n- Dynamic surge pricing\n- Complete ride lifecycle management\n\n## Base URL\n- Local: `http://localhost:3000/api`\n- Production: `https://api.example.com/api`\n\n## WebSocket\n- URL: `ws://localhost:3000`\n- See README.md for WebSocket events",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check if the API is running"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stats",
+			"item": [
+				{
+					"name": "Get System Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats"
+							]
+						},
+						"description": "Get real-time statistics about drivers, rides, and surge pricing"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rides",
+			"item": [
+				{
+					"name": "Get All Rides",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rides",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides"
+							]
+						},
+						"description": "Retrieve all rides in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Rides",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rides/active",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								"active"
+							]
+						},
+						"description": "Get all rides that are currently active"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Ride by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rides/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ride_1234567890_abc123",
+									"description": "Ride ID"
+								}
+							]
+						},
+						"description": "Retrieve a specific ride by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Request Ride",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"riderId\": \"rider_1\",\n  \"riderName\": \"Alice Smith\",\n  \"pickup\": {\n    \"lat\": 28.7041,\n    \"lng\": 77.1025\n  },\n  \"dropoff\": {\n    \"lat\": 28.6139,\n    \"lng\": 77.2090\n  },\n  \"rideType\": \"uberx\",\n  \"zone\": \"downtown\",\n  \"paymentMethod\": \"card\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rides/request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								"request"
+							]
+						},
+						"description": "Create a new ride request and match with nearest driver"
+					},
+					"response": []
+				},
+				{
+					"name": "Estimate Fare",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"pickup\": {\n    \"lat\": 28.7041,\n    \"lng\": 77.1025\n  },\n  \"dropoff\": {\n    \"lat\": 28.6139,\n    \"lng\": 77.2090\n  },\n  \"zone\": \"downtown\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rides/estimate-fare",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								"estimate-fare"
+							]
+						},
+						"description": "Calculate estimated fare for a ride without creating it"
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Ride",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driverId\": \"driver_1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rides/:id/accept",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								":id",
+								"accept"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ride_1234567890_abc123",
+									"description": "Ride ID"
+								}
+							]
+						},
+						"description": "Driver accepts a ride request"
+					},
+					"response": []
+				},
+				{
+					"name": "Start Ride",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rides/:id/start",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								":id",
+								"start"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ride_1234567890_abc123",
+									"description": "Ride ID"
+								}
+							]
+						},
+						"description": "Mark ride as started (after driver arrives)"
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Ride",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/rides/:id/complete",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								":id",
+								"complete"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ride_1234567890_abc123",
+									"description": "Ride ID"
+								}
+							]
+						},
+						"description": "Complete the ride and generate receipt"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Ride",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Changed my mind\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rides/:id/cancel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rides",
+								":id",
+								"cancel"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ride_1234567890_abc123",
+									"description": "Ride ID"
+								}
+							]
+						},
+						"description": "Cancel an active ride"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Drivers",
+			"item": [
+				{
+					"name": "Get All Drivers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/drivers",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"drivers"
+							]
+						},
+						"description": "Retrieve all drivers in the system"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Available Drivers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/drivers/available",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"drivers",
+								"available"
+							]
+						},
+						"description": "Get all drivers who are currently available"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Driver by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/drivers/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"drivers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "driver_1",
+									"description": "Driver ID"
+								}
+							]
+						},
+						"description": "Retrieve a specific driver by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Driver Location History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/drivers/:id/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"drivers",
+								":id",
+								"history"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "driver_1",
+									"description": "Driver ID"
+								}
+							]
+						},
+						"description": "Get location history for a driver"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Driver Location",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"location\": {\n    \"lat\": 28.7041,\n    \"lng\": 77.1025\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/drivers/:driverId/location",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"drivers",
+								":driverId",
+								"location"
+							],
+							"variable": [
+								{
+									"key": "driverId",
+									"value": "driver_1",
+									"description": "Driver ID"
+								}
+							]
+						},
+						"description": "Update a driver's current location"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api",
+			"type": "string"
+		}
+	]
+}
