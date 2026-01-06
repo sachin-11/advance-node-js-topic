@@ -66,19 +66,17 @@ async function bootstrap() {
     .addServer('https://api.quickcommerce.com', 'Production')
     .build();
 
-  // Global prefix (exclude health endpoint and root routes)
+  // Global prefix (exclude health endpoint, docs, and root routes)
   app.setGlobalPrefix(apiPrefix, {
-    exclude: ['health', '/'],
+    exclude: ['health', 'docs', '/'],
   });
 
   // Swagger API Documentation (setup AFTER global prefix with proper configuration)
-  const document = SwaggerModule.createDocument(app, config, {
-    ignoreGlobalPrefix: true, // Don't apply global prefix to Swagger document paths
-  });
+  const document = SwaggerModule.createDocument(app, config);
   
   // Setup Swagger at /docs to avoid path conflicts with api-docs
   SwaggerModule.setup('docs', app, document, {
-    useGlobalPrefix: false, // Critical: Don't apply global prefix to Swagger UI routes
+    useGlobalPrefix: false, // Don't apply global prefix to Swagger UI routes
     customSiteTitle: 'Quick Commerce API Docs',
     customfavIcon: '/favicon.ico', // Use local favicon to avoid CSP issues
     customCss: '.swagger-ui .topbar { display: none }',
